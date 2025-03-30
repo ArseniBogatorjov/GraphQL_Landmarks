@@ -198,6 +198,96 @@ mutation {
 }
 ```
 
+### 🟩 Фото 🟩
+
+### 🔹 Получение фото по id достоcтопримечательности  (Открытый)
+```graphql
+query {
+  photoByLandmark(landmarkId: 1) {
+    id
+    url
+    description
+    landmarkId
+    userId
+  }
+}
+```
+### 🔹 Добавление фото (Авторизованный пользователь)
+```graphql
+mutation {
+  addPhoto(
+    url: "https://example.com/photo.jpg"
+    description: "A beautiful landmark"
+    landmarkId: 1
+  ) {
+    id
+    url
+    description
+    landmarkId
+    userId
+  }
+}
+```
+### 🔹 Обновление фото (Владелец)
+```graphql
+mutation {
+  updatePhoto(
+    id: 2
+    url: "https://example.com/updated_photo.jpgggggg"
+    description: "An updated description"
+    landmarkId: 1
+  ) {
+    id
+    url
+    description
+    landmarkId
+    userId
+  }
+}
+```
+### 🔹 Удаление фото (Владелец)
+```graphql
+mutation {
+  deletePhoto(id: 1)
+}
+```
+
+### 🟩 Рейтинги 🟩
+
+```graphql
+query {
+  avgRating(landmarkId: 1)
+}
+```
+### 🔹 Добавить рейтинг (Авторизованный пользователь)
+```graphql
+mutation {
+  addRating(rating: 5, landmarkId: 1) {
+    id
+    rating
+    userId
+    landmarkId
+  }
+}
+```
+### 🔹 Обновить рейтинг (Владелец)
+```graphql
+mutation {
+  updateRating(id: 10, rating: 4) {
+    id
+    rating
+    userId
+    landmarkId
+  }
+}
+```
+### 🔹 Удалить рейтинг (Владелец)
+```graphql
+mutation {
+  deleteRating(id: 2)
+}
+
+```
 
 ### 🟩 Фильтрация и сортировка 🟩
 
@@ -213,5 +303,12 @@ query {
     imageURL
     userId
   }
+}
+```
+
+### 🔹 Достопримечательности по рейтингу (Открытый)
+```graphql
+query {
+  landmarksAboveRating(minRating: 4)
 }
 ```

@@ -15,7 +15,8 @@ const { authMiddleware } = require("./middleware/middleware");
 
 
 const schema = mergeSchemas({
-  schemas: [userSchema, landmarkSchema],
+  schemas: [userSchema, landmarkSchema, photoSchema, ratingSchema],
+  // schemas: [userSchema, landmarkSchema],
 });
 
 
