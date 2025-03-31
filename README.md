@@ -234,7 +234,6 @@ mutation {
     id: 2
     url: "https://example.com/updated_photo.jpgggggg"
     description: "An updated description"
-    landmarkId: 1
   ) {
     id
     url
