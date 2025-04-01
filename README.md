@@ -307,8 +307,21 @@ query {
 ### 🔹 Достопримечательности по рейтингу (Открытый)
 ```graphql
 query {
-  landmarksAboveRating(minRating: 4) {
-    id
+  landmarksAboveRating(rating: 4) {
+    landmark {
+      id
+      name
+      description
+      location
+      country
+      imageURL
+    }
+    avgRating
   }
 }
 ```
+
+![image](https://github.com/user-attachments/assets/0b072bd7-f2f9-4eb3-bfa6-4db3c1139270)
+
+
+
