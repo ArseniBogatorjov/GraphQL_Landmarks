@@ -9,6 +9,7 @@ const {
 const sequelize = require("../config/database"); 
 const RatingType = require("./TypeDefs/ratingType");
 const LandmarkType = require("./TypeDefs/landmarkType");
+const LandmarkWithAvgRatingType = require("./TypeDefs/LandmarkWithAvgRatingType");
 const Rating = require("../models/rating");
 const Landmark = require("../models/landmark");
 
@@ -41,10 +42,16 @@ const RootQuery = new GraphQLObjectType({
     },
 
     landmarksAboveRating: {
-      type: new GraphQLList(LandmarkType), 
-      args: { minRating: { type: GraphQLInt } },
+      type: new GraphQLList(LandmarkWithAvgRatingType),
+      args: {
+        rating: { type: GraphQLInt }, 
+      },
       async resolve(parent, args) {
-        const results = await Landmark.findAll({
+        if (!args.rating) {
+          throw new Error("Please provide a rating threshold!");
+        }
+
+        const landmarks = await Landmark.findAll({
           attributes: [
             "id",
             "name",
@@ -52,7 +59,7 @@ const RootQuery = new GraphQLObjectType({
             "location",
             "country",
             "imageURL",
-            "userId",
+            [sequelize.fn("AVG", sequelize.col("ratings.rating")), "avgRating"],
           ],
           include: [
             {
@@ -62,14 +69,27 @@ const RootQuery = new GraphQLObjectType({
             },
           ],
           group: ["Landmark.id"],
-          having: sequelize.literal(`AVG(ratings.rating) > ${args.minRating}`),
-          raw: true,
+          having: sequelize.where(
+            sequelize.fn("AVG", sequelize.col("ratings.rating")),
+            ">=",
+            args.rating
+          ),
         });
 
-        return results.map((landmark) => ({
-          ...landmark,
-          avgRating: parseFloat(landmark.avgRating).toFixed(2), 
-        }));
+        return landmarks.map((landmark) => {
+          return {
+            landmark: {
+              id: landmark.id,
+              name: landmark.name,
+              description: landmark.description,
+              location: landmark.location,
+              country: landmark.country,
+              imageURL: landmark.imageURL,
+              userId: landmark.userId,
+            },
+            avgRating: parseFloat(landmark.dataValues.avgRating).toFixed(2), 
+          };
+        });
       },
     },
   },
